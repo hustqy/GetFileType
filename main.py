@@ -6,9 +6,13 @@ def Main():
     args = sys.argv[1:]
     filepath = args[0]
 
+    i = 0
     for filename in os.listdir(filepath):
-        FileType(os.path.join(filepath,filename))
-
+        if i < 100:
+            FileType(os.path.join(filepath,filename))
+            i += 1
+        else:
+            break
 
 
 
