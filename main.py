@@ -8,7 +8,7 @@ def Main():
 
     i = 0
     for filename in os.listdir(filepath):
-        if i < 100:
+        if i < 300:
             FileType(os.path.join(filepath,filename))
             i += 1
         else:

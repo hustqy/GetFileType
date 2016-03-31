@@ -1,4 +1,5 @@
 import struct
+import olefile
 
 class MSOffice:
 
@@ -6,9 +7,18 @@ class MSOffice:
     MAGIC_FORMAT = ''
     FILE_TYPE = ['doc','xls','ppt','msg']
 
-    def __init__(self,data):
+    def __init__(self,data,path = None):
         self.data = data
         # print 'MSOffice'
-
+        self.parse()
     def parse(self):
-        pass
+        ole = olefile.OleFileIO(self.data, raise_defects=olefile.DEFECT_INCORRECT)
+        # print('Non-fatal issues raised during parsing:')
+        # if ole.parsing_issues:
+        #     for exctype, msg in ole.parsing_issues:
+        #         print('- %s: %s' % (exctype.__name__, msg))
+        # else:
+        #     print('None')
+
+        meta = ole.get_metadata()
+        print meta.creating_application

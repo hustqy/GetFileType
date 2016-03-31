@@ -25,7 +25,7 @@ class FileType:
     def __init__(self,filename):
         self.filename = filename
         self.data = open(self.filename,'rb').read()
-
+        self.path = filename
         self.parse()
 
     def parse(self):
@@ -47,7 +47,11 @@ class FileType:
 
                 CLASS_ = getattr(module, FileType.MAGIC_NUMS[key])
 
-                CLASS_(self.data)
+                CLASS_(self.data,self.path)
+            else:
+                print FileType.MAGIC_NUMS[key]
+        else:
+            print "other types can not be recognized"
 
             # else:
             #     print 'Got File Type %s'% FileType.MAGIC_NUMS[key]
