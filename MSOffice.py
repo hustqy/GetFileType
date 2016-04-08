@@ -1,5 +1,7 @@
 import struct
-import olefile
+import ole
+import sys
+import os
 
 class MSOffice:
 
@@ -7,18 +9,30 @@ class MSOffice:
     MAGIC_FORMAT = ''
     FILE_TYPE = ['doc','xls','ppt','msg']
 
-    def __init__(self,data,path = None):
-        self.data = data
-        # print 'MSOffice'
-        self.parse()
-    def parse(self):
-        ole = olefile.OleFileIO(self.data, raise_defects=olefile.DEFECT_INCORRECT)
-        # print('Non-fatal issues raised during parsing:')
-        # if ole.parsing_issues:
-        #     for exctype, msg in ole.parsing_issues:
-        #         print('- %s: %s' % (exctype.__name__, msg))
-        # else:
-        #     print('None')
+    def __init__(self, data, path=None):
 
-        meta = ole.get_metadata()
-        print meta.creating_application
+        self.data = data
+        self.path = path
+        self.prove_header()
+        self.parse()
+
+    def prove_header(self):
+        top8 = struct.unpack_from('8B',self.data,0)
+
+        assert ''.join(['{0:02x}'.format(i) for i in top8]).upper() == MSOffice.MAGIC_NUM, "not Msoffice file"
+
+    def parse(self):
+        ole_obj = ole.OleFileIO(self.data, raise_defects=ole.DEFECT_INCORRECT)
+        meta = ole_obj.get_metadata()
+        print os.path.basename(self.path),meta.creating_application
+        # if len(self.data) < 512:
+        #     logging.warning('document is less than 512 bytes')
+        # self.header = Header(self.data[:512],self.path)
+
+
+if __name__ == "__main__":
+    args = sys.argv[:]
+    data = open(args[1],'rb').read()
+
+    obj = MSOffice(data,args[1])
+

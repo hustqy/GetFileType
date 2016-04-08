@@ -1,4 +1,6 @@
 import struct
+import os
+
 
 class PE:
 
@@ -9,9 +11,8 @@ class PE:
     COFF_FORMAT = '<2h3I2H'
     def __init__(self,data,path = None):
         self.data = data
+        self.path = path
         self.SIG_OFFSET = 0x3c
-        self.parse_coff_header()
-
         self.Machine = None
         self.NumberOfSections = None
         self.TimeDateStamp =None
@@ -19,6 +20,7 @@ class PE:
         self.NumberOfSymbols =None
         self.SizeOfOptionalHeader= None
         self.Characteristics= None
+        self.parse_coff_header()
 
 
     def parse_coff_header(self):
@@ -28,7 +30,7 @@ class PE:
         signature, = struct.unpack_from('I',self.data,fp)
 
         if signature == int('0x4550',16):
-            print "get PE file"
+            print os.path.basename(self.path), "PE"
 
 
         fp += struct.calcsize('I')
